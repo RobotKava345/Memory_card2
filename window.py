@@ -6,7 +6,7 @@ window = QWidget()
 window.setWindowTitle("Memory Card")
 window.resize(500, 400)
 
-menu_btn = QPushButton("Меню")
+menu_btn = QPushButton("Статистика")
 rest_btn = QPushButton("Відпочити")
 time_box = QSpinBox()
 time_label = QLabel("хвилин")

@@ -1,5 +1,5 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QVBoxLayout, QLineEdit
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QLabel, QVBoxLayout, QLineEdit, QMessageBox
 from random import shuffle, choice
 app = QApplication([])
 
@@ -8,6 +8,11 @@ from window import *
 
 
 class Question:
+
+    correct_counter = 0
+    total_counter = 0
+
+
     def __init__(self, text, right_answer, ans1, ans2, ans3):
         self.text = text
         self.right_answer = right_answer
@@ -24,17 +29,20 @@ class Question:
         answer_text.setText(self.right_answer)
 
     def check_answer(self):
+        radio_group.setExclusive(False)
+        Question.total_counter+=1
         for answer in [btn1, btn2, btn3, btn4]:
             if answer.isChecked():
+                answer.setChecked(False)
                 if answer.text() == self.right_answer:
                     result_text.setText("Правильно!")
+                    Question.correct_counter+=1
                     break
                 else:
                     result_text.setText("Неправильно!")
                     break
-
-
-
+    
+        radio_group.setExclusive(True)
 
 
 
@@ -66,8 +74,25 @@ def switch_screen():
         result_box.hide()
         group_box.show()
         answer_btn.setText('Відповісти')
+
+def show_stat():
+    stat_win = QMessageBox()
+    stat_win.setIcon(QMessageBox.Information)
+    stat_win.setWindowTitle("Статистика")
+    try:
+        accuracy = Question.correct_counter / Question.total_counter * 100
+        stat_win.setText(f"Кі-сть відповідей: {Question.total_counter} \nКі-сть привильних відповідей:{Question.correct_counter}\nТочність:{accuracy} ")
+        
+    except:
+        stat_win.setText("Дайте хоча б одну відповідь для підрахунку статистики")
+    stat_win.exec_()
+
+
+
+
 next_question()
 answer_btn.clicked.connect(switch_screen)
+menu_btn.clicked.connect(show_stat)
 
 window.show()
 app.exec_()
